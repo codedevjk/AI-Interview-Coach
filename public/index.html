@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Coach - Interview Practice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .sidebar-item {
+            transition: all 0.2s ease;
+        }
+        .sidebar-item:hover {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+        }
+        .sidebar-item.active {
+            background-color: rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+            color: #10b981;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-gray-900 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+            <p class="text-gray-400">Loading AI Coach...</p>
+        </div>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="hidden min-h-screen flex items-center justify-center bg-gray-900">
+        <div class="max-w-md w-full space-y-8 p-8">
+            <div class="text-center">
+                <div class="flex items-center justify-center mb-6">
+                    <div class="bg-green-500 p-3 rounded-xl">
+                        <i data-lucide="brain-circuit" class="w-8 h-8 text-white"></i>
+                    </div>
+                </div>
+                <h2 class="text-3xl font-bold text-white">AI Coach</h2>
+                <p class="mt-2 text-gray-400">Interview Practice Platform</p>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <input id="login-email" type="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-white" placeholder="Enter your email">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <input id="login-password" type="password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-white" placeholder="Enter your password">
+                </div>
+                <button id="login-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition duration-200">
+                    Sign In
+                </button>
+                <p class="text-center text-gray-400">
+                    Don't have an account? 
+                    <button id="show-register" class="text-green-500 hover:text-green-400">Sign up</button>
+                </p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-form" class="hidden space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                    <input id="register-name" type="text" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-white" placeholder="Enter your full name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <input id="register-email" type="email" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-white" placeholder="Enter your email">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <input id="register-password" type="password" class="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-white" placeholder="Create a password">
+                </div>
+                <button id="register-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition duration-200">
+                    Create Account
+                </button>
+                <p class="text-center text-gray-400">
+                    Already have an account? 
+                    <button id="show-login" class="text-green-500 hover:text-green-400">Sign in</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" class="hidden flex h-screen bg-gray-900">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 border-r border-gray-700 flex flex-col">
+            <!-- Logo -->
+            <div class="p-6 border-b border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-green-500 p-2 rounded-lg">
+                        <i data-lucide="brain-circuit" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-white">AI Coach</h1>
+                        <p class="text-sm text-gray-400">Interview Practice</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 p-4 space-y-2">
+                <button class="sidebar-item active w-full flex items-center space-x-3 px-4 py-3 text-left">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-400">
+                    <i data-lucide="mic" class="w-5 h-5"></i>
+                    <span>Practice</span>
+                </button>
+                <button class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-400">
+                    <i data-lucide="history" class="w-5 h-5"></i>
+                    <span>History</span>
+                </button>
+                <button class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-400">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    <span>Analytics</span>
+                </button>
+            </nav>
+
+            <!-- User Profile -->
+            <div class="p-4 border-t border-gray-700">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                        <span id="user-avatar" class="text-white font-medium">U</span>
+                    </div>
+                    <div class="flex-1">
+                        <p id="user-name" class="text-white font-medium">Interview Candidate</p>
+                        <p class="text-gray-400 text-sm">Ready to practice</p>
+                    </div>
+                </div>
+                <button class="sidebar-item w-full flex items-center space-x-3 px-4 py-2 text-left text-gray-400">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                    <span>Settings</span>
+                </button>
+                <button id="logout-btn" class="sidebar-item w-full flex items-center space-x-3 px-4 py-2 text-left text-gray-400">
+                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-2xl font-bold text-white">Dashboard</h1>
+                    <div class="flex items-center space-x-4">
+                        <button class="p-2 text-gray-400 hover:text-white">
+                            <i data-lucide="bell" class="w-5 h-5"></i>
+                        </button>
+                        <button class="p-2 text-gray-400 hover:text-white">
+                            <i data-lucide="sun" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- Welcome Banner -->
+                <div class="gradient-bg rounded-2xl p-8 mb-8 text-white">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="sparkles" class="w-6 h-6 mr-2"></i>
+                        <span class="text-lg">Welcome back!</span>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-2">Ready for your next practice session?</h2>
+                    <p class="text-lg opacity-90 mb-6">You're on a 7-day streak! Keep up the great work.</p>
+                    <button class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-6 py-3 rounded-lg font-medium transition duration-200 flex items-center">
+                        <i data-lucide="play" class="w-5 h-5 mr-2"></i>
+                        Start Practice Session
+                    </button>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-gray-400 text-sm font-medium">Total Sessions</h3>
+                            <div class="p-2 bg-green-500 bg-opacity-20 rounded-lg">
+                                <i data-lucide="target" class="w-5 h-5 text-green-500"></i>
+                            </div>
+                        </div>
+                        <p id="total-sessions" class="text-3xl font-bold text-white">24</p>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-gray-400 text-sm font-medium">Average Score</h3>
+                            <div class="p-2 bg-green-500 bg-opacity-20 rounded-lg">
+                                <i data-lucide="award" class="w-5 h-5 text-green-500"></i>
+                            </div>
+                        </div>
+                        <p id="average-score" class="text-3xl font-bold text-white">82%</p>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-gray-400 text-sm font-medium">Improvement</h3>
+                            <div class="p-2 bg-blue-500 bg-opacity-20 rounded-lg">
+                                <i data-lucide="trending-up" class="w-5 h-5 text-blue-500"></i>
+                            </div>
+                        </div>
+                        <p id="improvement" class="text-3xl font-bold text-white">+15%</p>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-gray-400 text-sm font-medium">Practice Streak</h3>
+                            <div class="p-2 bg-orange-500 bg-opacity-20 rounded-lg">
+                                <i data-lucide="calendar" class="w-5 h-5 text-orange-500"></i>
+                            </div>
+                        </div>
+                        <p id="practice-streak" class="text-3xl font-bold text-white">7 days</p>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-white mb-6">Quick Actions</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 card-hover cursor-pointer">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="p-3 bg-green-500 bg-opacity-20 rounded-xl">
+                                    <i data-lucide="mic" class="w-8 h-8 text-green-500"></i>
+                                </div>
+                                <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">Most Popular</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Start Practice Session</h3>
+                            <p class="text-gray-400 mb-4">Begin a new AI-powered interview practice</p>
+                            <button class="text-green-500 hover:text-green-400 font-medium flex items-center">
+                                Get Started <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                            </button>
+                        </div>
+
+                        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 card-hover cursor-pointer">
+                            <div class="p-3 bg-gray-600 bg-opacity-50 rounded-xl mb-4">
+                                <i data-lucide="clock" class="w-8 h-8 text-gray-400"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">View Feedback History</h3>
+                            <p class="text-gray-400 mb-4">Review your past sessions and improvements</p>
+                            <button class="text-green-500 hover:text-green-400 font-medium flex items-center">
+                                Get Started <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                            </button>
+                        </div>
+
+                        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 card-hover cursor-pointer">
+                            <div class="p-3 bg-green-500 bg-opacity-20 rounded-xl mb-4">
+                                <i data-lucide="trending-up" class="w-8 h-8 text-green-500"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white mb-2">Performance Analytics</h3>
+                            <p class="text-gray-400 mb-4">Deep dive into your progress metrics</p>
+                            <button class="text-green-500 hover:text-green-400 font-medium flex items-center">
+                                Get Started <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Sessions -->
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-2xl font-bold text-white">Recent Sessions</h2>
+                        <button class="text-green-500 hover:text-green-400 font-medium flex items-center">
+                            View All <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="recent-sessions" class="space-y-4">
+                        <!-- Sessions will be loaded here -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
